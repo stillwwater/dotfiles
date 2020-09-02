@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""
+cloc with total
+"""
+
+import sys
+import subprocess
+import csv
+from io import StringIO
+
+HEADER = ('Language', 'files', 'lines', 'blank', 'comment', 'code')
+ITEM_LENGTH = 14
+COLUMNS = 80
+LANGUAGE_LENGTH = COLUMNS - (5*ITEM_LENGTH)
+
+
+def convert(value):
+    if value.isdigit():
+        return int(value)
+    return value
+
+
+def create_table(csv_reader):
+    table = [HEADER]
+    for row in reader:
+        row = tuple(map(convert, row))
+        files, lang, blank, comment, code = row
+        lines = blank + comment + code
+        if len(lang) > LANGUAGE_LENGTH:
+            lang = lang[:LANGUAGE_LENGTH - 1] + '|'
+        if lang == 'SUM':
+            lang += ':'
+        table.append((lang, files, lines, blank, comment, code))
+    return table
+
+
+def print_row(row):
+    fmt = f'{{0:<{LANGUAGE_LENGTH}}}'
+    for i in range(5):
+        fmt += f'{{{i+1}:>{ITEM_LENGTH}}}'
+    print(fmt.format(*row))
+
+
+def print_table(table):
+    sep = '-' * COLUMNS
+    print(sep)
+    print_row(table[0])
+    print(sep)
+    for row in table[1:-1]:
+        print_row(row)
+    print(sep)
+    print_row(table[-1])
+    print(sep)
+
+
+if __name__ == '__main__':
+    cloc = ['cloc', '--csv', '--quiet'] + sys.argv[1:]
+
+    try:
+        process = subprocess.run(cloc, stdout=subprocess.PIPE)
+    except KeyboardInterrupt:
+        exit(130)
+
+    result = process.stdout.decode('utf-8')
+
+    if '--help' in sys.argv:
+        print(result)
+        exit(process.returncode)
+
+    if process.returncode != 0:
+        exit(process.returncode)
+
+    reader = csv.reader(StringIO(result), delimiter=',')
+    next(reader, None)  # Empty line
+    next(reader, None)  # Header
+    table = create_table(reader)
+    print_table(table)
+    exit(process.returncode)

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+WAL_CMD_CACHE=~/.cache/stella/wal
+
+function log {
+    test -f ~/.cache/stella/log || touch ~/.cache/stella/log
+    echo "[$(date)] $1" >> ~/.cache/stella/log
+}
+
+function setc {
+    if [ "$#" -eq 0 ] || [ $1 == "-l" ]; then
+        if [[ -f "$WAL_CMD_CACHE" ]]; then
+            cached=$(<"$WAL_CMD_CACHE")
+            wal -i $cached $1
+            log "using cached colorscheme $cached"
+            return
+        fi
+        ls ~/.wal
+        return
+    fi
+    wal -i $1 $2
+    test -f $WAL_CMD_CACHE || touch $WAL_CMD_CACHE
+    echo $1 > $WAL_CMD_CACHE
+}
+
+function settheme {
+    case $1 in
+        '-d'|'dark')
+            setc
+            THEME=dark
+            ;;
+        '-l'|'light')
+            setc -l
+            THEME=light
+            ;;
+        *)
+            log "error: unsupported theme $1"
+            return
+    esac
+    sed -i "s/set background=.*/set background=$THEME/" ~/.vimrc
+}
+
+test -e ~/.cache/stella || mkdir ~/.cache/stella
+
+case $1 in
+    '-w'|'wal')
+        setc $2 $3
+        ;;
+    '-d'|'dark'|'-l'|'light')
+        settheme $1
+        ;;
+    '-x'|'display')
+        if xrandr --query | grep '\bconnected\b' | grep -v 'eDP-1'; then
+            log "secondary display only mode"
+            xrandr --output eDP-1 --off
+        else
+            log "high dpi mode"
+            xrandr --dpi 120
+        fi
+        ;;
+    '-c'|'compton')
+        compton --experimental-backends --backend xrender --vsync
+        ;;
+    '-p'|'log')
+	    cat ~/.cache/stella/log
+    	;;
+    'hi')
+        log "hello"
+        ;;
+esac
