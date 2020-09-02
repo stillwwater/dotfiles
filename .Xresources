@@ -1,0 +1,103 @@
+!  urxvt --------------------------------------
+URxvt.font:  xft:sfmono:size=11
+!URxvt.font: Fixedsys Excelsior
+Xcursor.size: 18
+
+! theme
+URxvt.cursorColor:  #c9cbd1
+URxvt.foreground:   #c9cbd1
+
+! black
+URxvt.color0:       #273845
+URxvt.color8:       #273845
+
+! red
+URxvt.color1:       #d65e76
+URxvt.color9:       #d65e76
+
+! green
+URxvt.color2:       #7a6ab8
+URxvt.color10:      #7a6ab8
+
+! yellow
+URxvt.color3:       #8de5ec
+URxvt.color11:      #8de5ec
+
+! blue
+URxvt.color4:       #bbaaee
+URxvt.color12:      #bbaaee
+
+! magenta
+URxvt.color5:       #b294bb
+URxvt.color13:      #b294bb
+
+! cyan
+URxvt.color6:       #95a3ae
+URxvt.color14:      #95a3ae
+
+! white
+URxvt.color7:       #fafafa
+URxvt.color15:      #fafafa
+
+! urxvt-unicode-256
+URxvt.letterSpace: -1
+
+Xft.autohint:   0
+Xft.lcdfilter:  lcddefault
+Xft.hinting:    1
+Xft.hintstyle:  hintslight
+Xft.antialias:  1
+Xft.rgba:       rgb
+
+URxvt.lineSpace:   1
+URxvt.scrollBar:   false
+URxvt.cursorBlink: 1
+
+URxvt.internalBorder: 32
+
+! Plugins
+URxvt.perl-ext-common: default,resize-font,clipboard
+
+URxvt.keysym.C-minus: resize-font:smaller
+URxvt.keysym.C-equal: resize-font:bigger
+URxvt.keysym.C-plus:  resize-font:reset
+
+URxvt.clipboard.copycmd:  xclip -i -selection clipboard
+URxvt.clipboard.pastecmd: xclip -o -selection clipboard
+
+URxvt.keysym.M-c: perl:clipboard:copy
+URxvt.keysym.M-v: perl:clipboard:paste
+
+! Fix arrow keys
+URxvt.keysym.Control-Up:    \033[1;5A
+URxvt.keysym.Control-Down:  \033[1;5B
+URxvt.keysym.Control-Left:  \033[1;5D
+URxvt.keysym.Control-Right: \033[1;5C
+
+! === rofi ===
+
+rofi.modi:                           run
+rofi.sidebar-mode:                   false
+rofi.terminal:                       urxvt
+rofi.ssh-client:                     ssh
+rofi.ssh-command:                    {terminal} -e "{ssh-client} {host}"
+rofi.opacity:                        100
+rofi.width:                          32
+rofi.lines:                          12
+rofi.columns:                        1
+rofi.font:                           Iosevka 12
+! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
+rofi.color-normal: #11121A,  #c3c2bb,  #11121A,  #181a1e,  #ffffff
+!                  'background', 'border'
+rofi.color-window: #11121A,      #272b31
+rofi.bw:                             2
+rofi.location:                       0
+rofi.padding:                        20
+rofi.levenshtein-sort:               true
+rofi.case-sensitive:                 false
+rofi.fuzzy:                          false
+rofi.line-margin:                    2
+rofi.separator-style:                dotted
+rofi.hide-scrollbar:                 true
+rofi.markup-rows:                    false
+rofi.scrollbar-width:                8

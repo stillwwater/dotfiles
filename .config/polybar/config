@@ -1,0 +1,103 @@
+
+[colors]
+bg      = ${xrdb:background}
+bg-alt  = #c1c1c1
+fg      = ${xrdb:color8}
+#fg      = #d3d2cb
+bd      = ${xrdb:color8}
+
+
+[bar/top]
+background = ${colors.bg}
+foreground = ${colors.fg}
+width                    = 100%
+height                   = 28
+radius                   = 0
+line-size                = 0
+bottom                   = false
+padding-left             = 1
+padding-right            = 1
+
+border-size = 0
+border-color = ${colors.bd}
+
+fixed-center = true
+#font-0 = cherry:size=12;1
+font-0 = cherry:size=12;1
+
+modules-left   = i3
+modules-right  = battery cpu date
+modules-center = title
+module-margin  = 0
+
+tray-position    = none
+tray-maxsize     = 24
+tray-detached    = false
+tray-transparent = false
+tray-padding     = 2
+tray-scale       = 1.0
+
+override-redirect = true
+offset-x = 0%
+offset-y = 0%
+wm-restack = i3
+
+padding = 0
+
+wm-name = i3
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[module/i3]
+type = internal/i3
+strip-wsnumbers = true
+index-sort = true
+label-focused-foreground = ${xrdb:color7}
+label-unfocused-foreground = ${xrdb:color8}
+enable-click = true
+
+[module/title]
+type = internal/xwindow
+
+[module/date]
+type     = internal/date
+interval = 60
+date     = %a %d %b
+time     = %l:%M %p
+label    = %time%
+format   = %{A1:urxvt -e sh -c "cal; read":}<label>%{A}
+format-padding = 1
+
+[module/cpu]
+type = internal/cpu
+format = %{A1:urxvt -e sh -c "htop":}<ramp-load>%{A}
+
+; Warn if cpu usage is above 50%
+ramp-load-0 = " "
+ramp-load-1 = *
+
+[module/battery]
+type    = internal/battery
+battery = BAT1
+adapter = ADP1
+full-at = 100
+
+;label-discharging =
+label-charging  = "   ~%percentage%%"
+label-full      = "   full"
+
+ramp-capacity-0 = "~low~  "
+ramp-capacity-1 = "~      "
+ramp-capacity-2 = "~      "
+ramp-capacity-3 = "-      "
+ramp-capacity-4 = "- ~    "
+ramp-capacity-5 = "- -    "
+ramp-capacity-6 = "- - ~  "
+ramp-capacity-7 = "- - -  "
+ramp-capacity-8 = "- - - ~"
+ramp-capacity-9 = "- - - -"
+
+bar-capacity-width = 10
+format-discharging = %{A1:urxvt -e sh -c "acpi; read":}<ramp-capacity>%{A}
+
+; vim:ft=dosini
