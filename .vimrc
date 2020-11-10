@@ -7,6 +7,9 @@
 "
 
 syntax on
+
+let mapleader = ","
+
 set mouse=a  " :O
 set laststatus=2
 
@@ -21,11 +24,15 @@ set cino+=g0  " Don't indent public: or private: labels
 
 set splitbelow
 
+" Sign column for coc.nvim
+set signcolumn=yes
+
+" Pretty much the default status line but using virtual column
+" instead of actual column
+set statusline=%f\ %w%m%r\ %=%(%l,%v\ %=\ \ \ \ \ \ \ \ \ \ %P%)
+
 " Strip trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
-
-map [1;5A <C-Up>
-map [1;5B <C-Down>
 
 " 2 spaces
 autocmd FileType javascript setlocal ts=2 sts=2 sw=2
@@ -39,14 +46,10 @@ autocmd FileType go setlocal ts=4 sw=4 noexpandtab
 autocmd FileType asm setlocal ts=8 sw=8 noexpandtab
 autocmd FileType masm setlocal ts=8 sw=8 noexpandtab
 
-" Sign column for coc.nvim
-set signcolumn=yes
-
-let mapleader = ","
-
-" Pretty much the default status line but using virtual column
-" instead of actual column
-set statusline=%f\ %w%m%r\ %=%(%l,%v\ %=\ \ \ \ \ \ \ \ \ \ %P%)
+" Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+autocmd BufWritePost *.ts :Prettier
+autocmd BufWritePost *.tsx :Prettier
 
 " _____  _             _
 " |  __ \| |           (_)
@@ -63,41 +66,36 @@ else
     call plug#begin('~/.vim/plugged')
 endif
 
-Plug 'omnisharp/omnisharp-vim'
-Plug 'tpope/vim-dispatch'
-Plug 'kien/ctrlp.vim'
-Plug 'jiangmiao/auto-pairs'
-Plug 'bfrg/vim-cpp-modern'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-Plug 'vim-scripts/ShaderHighLight'
+" qol
 Plug 'junegunn/goyo.vim'
-Plug 'mattn/emmet-vim'
-Plug 'leafgarland/typescript-vim'
-Plug 'HerringtonDarkholme/yats.vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'jiangmiao/auto-pairs'
+Plug 'kien/ctrlp.vim'
+
+" lsp
 Plug 'neoclide/coc.nvim'
 Plug 'dense-analysis/ale'
+Plug 'omnisharp/omnisharp-vim'
 
+" language support
+Plug 'vim-scripts/ShaderHighLight'
+Plug 'bfrg/vim-cpp-modern'
+Plug 'leafgarland/typescript-vim'
+Plug 'tasn/vim-tsx'
+
+" colorschemes
+Plug 'stillwwater/vim-violet'
 Plug 'stillwwater/vim-nebula'
 Plug 'srcery-colors/srcery-vim'
-Plug 'rakr/vim-two-firewatch'
 Plug 'relastle/bluewery.vim'
 Plug 'ciaranm/inkpot'
 Plug 'morhetz/gruvbox'
-Plug 'protesilaos/prot16-vim'
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'dylanaraps/wal.vim'
-Plug 'fcpg/vim-fahrenheit'
-Plug 'haishanh/night-owl.vim'
 Plug 'owickstrom/vim-colors-paramount'
 Plug 'reedes/vim-colors-pencil'
-Plug 'noahfrederick/vim-hemisu/'
 Plug 'YorickPeterse/happy_hacking.vim'
+Plug 'nanotech/jellybeans.vim'
 Plug 'axvr/photon.vim'
 Plug 'andreypopp/vim-colors-plain'
-Plug 'nanotech/jellybeans.vim'
-
-set t_Co=256
 
 filetype plugin indent on
 
@@ -108,52 +106,40 @@ call plug#end()
 " |__   __| |
 "    | |  | |__   ___ _ __ ___   ___
 "    | |  | '_ \ / _ \ '_ ` _ \ / _ \
-"    | |  | | | |  __/ | | | | |  __/
+"    | |  | | | |  __/ | | | | |  _
 "    |_|  |_| |_|\___|_| |_| |_|\___|
 "
 
-" vim >=8.0 or Neovim >= 0.1.5
+" Highlight ALL_UPPERCASE as constants
+syn match MacroConstant '\v\w@<!(\u|_+[A-Z0-9])[A-Z0-9_]*\w@!'
+
+" Vector types
+syn match VectorType '\v\w@<!(float|int|double|char|bool)[2-8](x[2-8])?\w@!'
+syn match SSEType '\v\w@<!__m128(i)?\w@!'
+
+set t_Co=256
+
 if (has("termguicolors"))
   set termguicolors
 endif
 
-" For Neovim 0.1.3 and 0.1.4
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-
-" Enable the theme
-syntax enable
 set background=dark
-colorscheme nebula
+
+let g:violet_accent='purple'
+let g:violet_blue=0
+
+colorscheme violet
 
 " User terminal background
 hi! Normal ctermbg=NONE guibg=NONE
 
 " Italics on comments: yikes
-hi Comment cterm=NONE gui=NONE
+hi! Comment cterm=NONE gui=NONE
 
-" Todo files
-au BufNewFile,BufRead todo.txt set filetype=task
-
-" Highlight ALL_UPPERCASE as constants
-syn match MacroConstant '\v\w@<!(\u|_+[A-Z0-9])[A-Z0-9_]*\w@!'
-hi link MacroConstant Constant
-
-" Vector types
-syn match VectorType '\v\w@<!(float|int|double|char|bool)[2-8](x[2-8])?\w@!'
-syn match SSEType '\v\w@<!__m128(i)?\w@!'
-hi link VectorType Type
-hi link SSEType    Type
-
-hi link typescriptFuncKeyword Type
-hi link typescriptExport      Type
-hi link typescriptImport      Type
-
-hi link csUserType            Normal
-hi link csOpSymbols           Normal
-hi link csUserIdentifier      Normal
-hi link csUserMethod          Function
-
-hi link cppUserTypedefs       Type
+hi! link MacroConstant PreProc
+hi! link VectorType    Type
+hi! link SSEType       Type
+hi! link csUserType    Normal
 
 "  _  __          _     _           _
 " | |/ /         | |   (_)         | |
@@ -165,65 +151,17 @@ hi link cppUserTypedefs       Type
 "           |___/
 "
 
-" Move line down
-nnoremap <C-Down> :m .+1<CR>==
-inoremap <C-Down> <Esc>:m .+1<CR>==gi
-vnoremap <C-Down> :m '>+1<CR>gv=gv
-
-" Move line up
-nnoremap <C-Up> :m .-2<CR>==
-inoremap <C-Up> <Esc>:m .-2<CR>==gi
-vnoremap <C-Up> :m '<-1<CR>gv=gv
-
-" Toggle insert (when using laptops without esc key)
-nmap <C-a> i
-imap <C-a> <Esc>
-
-" Duplicate line (this is no fun)
-nnoremap <leader>d ddkpp
-
-" Centered scrolling
-nnoremap <Down> jzz
-nnoremap <Up> kzz
-nnoremap <PageUp> <PageUp>zz
-nnoremap <PageDown> <PageDown>zz
-
-" .vimrc
-nnoremap <leader>r :source $MYVIMRC<CR>
-nnoremap <leader>v :e $MYVIMRC<CR>
-
-" Echo syntax group
-nnoremap <leader>tm :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
-
-" Terminal
-nnoremap <C-j> :terminal<CR>
-nnoremap <leader>ht :terminal<CR>
-nnoremap <leader>vt :vert terminal<CR>
-
-nmap ga <Plug>(EasyAlign)
-
-" Zen mode
-noremap <leader>z :Goyo<CR>
-
-let g:savedpos = getpos('.')
-let g:savedposfw = getpos('.')
-
 " Remember current cursor position
 function! MemPos()
   let g:savedpos = getpos('.')
 endfunction
 
 " Jump back to saved cursor position
-" useful when you need to jump to the top of a file
-" to include a header, then return to where you were.
 function! JumpPos()
   let g:savedposfw = g:savedpos
   call MemPos()
   call setpos('.', g:savedposfw)
 endfunction
-
-nmap <leader>m :call MemPos()<CR>
-nmap <leader>j :call JumpPos()<CR>zz
 
 function! HeaderSwitch(cmd)
   if expand('%:e') == 'h'
@@ -233,23 +171,69 @@ function! HeaderSwitch(cmd)
   endif
 endfunction
 
-" Switch cpp file
-nmap <C-k>o :call HeaderSwitch('e')<CR>
-imap <C-k>o :call HeaderSwitch('e')<CR>
-nmap <C-k><C-o> :call HeaderSwitch('vs')<CR>
-imap <C-k><C-o> :call HeaderSwitch('vs')<CR>
-
-" Go
-autocmd FileType go map <buffer> <C-B> :GoRun<CR>
-
 " Auto create licenses
-function! Zlib()
-  exec '0r ~/.vim/licenses/zlib.txt'
+function! License(name)
+  exec '0r ~/.vim/licenses/' . a:name . '.txt'
 endfunction
 
-function! MIT()
-  exec '0r ~/.vim/licenses/mit.txt'
-endfunction
+map [1;5A <C-Up>
+map [1;5B <C-Down>
+
+" Toggle insert (when using laptops without esc key)
+nmap <C-a> i
+imap <C-a> <Esc>
+
+" Move line down
+nno <C-Down> :m .+1<CR>==
+ino <C-Down> <Esc>:m .+1<CR>==gi
+vno <C-Down> :m '>+1<CR>gv=gv
+
+" Move line up
+nno <C-Up> :m .-2<CR>==
+ino <C-Up> <Esc>:m .-2<CR>==gi
+vno <C-Up> :m '<-2<CR>gv=gv
+
+" Centered scrolling
+nno <Down> jzz
+nno <Up> kzz
+nno <PageUp> <PageUp>zz
+nno <PageDown> <PageDown>zz
+
+" .vimrc
+nno <leader>r :source $MYVIMRC<CR>
+nno <leader>v :e $MYVIMRC<CR>
+
+" Terminal
+nno <C-k><C-j> :terminal<CR>
+nno <leader>ht :terminal<CR>
+nno <leader>vt :vert terminal<CR>
+
+" Align with gaip=
+nmap ga <Plug>(EasyAlign)
+
+" Zen mode
+nno <leader>z :Goyo<CR>
+
+let g:savedpos = getpos('.')
+let g:savedposfw = getpos('.')
+
+nno <leader>m :call MemPos()<CR>
+nno <leader>j :call JumpPos()<CR>zz
+
+" Switch cpp file
+nno <C-k>o :call HeaderSwitch('e')<CR>
+ino <C-k>o :call HeaderSwitch('e')<CR>
+nno <C-k><C-o> :call HeaderSwitch('vs')<CR>
+ino <C-k><C-o> :call HeaderSwitch('vs')<CR>
+
+nno <leader>zlib :call License('zlib')<CR>
+nno <leader>mit :call License('mit')<CR>
+
+" Echo syntax group
+nno <leader>tm
+      \ :echo
+      \ synIDattr(synID(line('.'), col('.'), 1), 'name')
+      \ <CR>
 
 "  _
 " | |
