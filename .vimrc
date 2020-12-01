@@ -12,6 +12,7 @@ let mapleader = ","
 
 set mouse=a  " :O
 set laststatus=2
+set backspace=indent,eol,start
 
 set tabstop=4
 set shiftwidth=4
@@ -31,25 +32,42 @@ set signcolumn=yes
 " instead of actual column
 set statusline=%f\ %w%m%r\ %=%(%l,%v\ %=\ \ \ \ \ \ \ \ \ \ %P%)
 
+set noerrorbells
+set belloff=all
+
+if has('gui_running')
+  " No nonsense
+  set guioptions=Ace
+  set clipboard=unnamedplus
+
+  set guifont=Fira\ Code\ Retina:h11
+
+  " Always use block cursor
+  set guicursor=i-n-v-c:block-Cursor/lCursor
+
+  " Start maximized
+  au GUIEnter * simalt ~x
+endif
+
 " Strip trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
 
 " 2 spaces
-autocmd FileType javascript setlocal ts=2 sts=2 sw=2
-autocmd FileType css setlocal ts=2 sts=2 sw=2
-autocmd FileType typescript setlocal ts=2 sts=2 sw=2
-autocmd FileType typescriptreact setlocal ts=2 sts=2 sw=2
-autocmd FileType html setlocal ts=2 sts=2 sw=2
+au FileType javascript setlocal ts=2 sts=2 sw=2
+au FileType css setlocal ts=2 sts=2 sw=2
+au FileType typescript setlocal ts=2 sts=2 sw=2
+au FileType typescriptreact setlocal ts=2 sts=2 sw=2
+au FileType html setlocal ts=2 sts=2 sw=2
 
 " Tabs
-autocmd FileType go setlocal ts=4 sw=4 noexpandtab
-autocmd FileType asm setlocal ts=8 sw=8 noexpandtab
-autocmd FileType masm setlocal ts=8 sw=8 noexpandtab
+au FileType go setlocal ts=4 sw=4 noexpandtab
+au FileType asm setlocal ts=8 sw=8 noexpandtab
+au FileType masm setlocal ts=8 sw=8 noexpandtab
 
 " Prettier
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
-autocmd BufWritePost *.ts :Prettier
-autocmd BufWritePost *.tsx :Prettier
+au BufWritePost *.ts :Prettier
+au BufWritePost *.tsx :Prettier
 
 " _____  _             _
 " |  __ \| |           (_)
@@ -119,19 +137,19 @@ syn match SSEType '\v\w@<!__m128(i)?\w@!'
 
 set t_Co=256
 
-if (has("termguicolors"))
+if (has('termguicolors'))
   set termguicolors
 endif
 
 set background=dark
 
-let g:violet_accent='purple'
+let g:violet_accent='pink'
 let g:violet_blue=0
 
 colorscheme violet
 
 " User terminal background
-hi! Normal ctermbg=NONE guibg=NONE
+hi! Normal ctermbg=NONE
 
 " Italics on comments: yikes
 hi! Comment cterm=NONE gui=NONE
