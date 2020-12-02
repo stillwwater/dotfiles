@@ -32,12 +32,16 @@ set signcolumn=yes
 " instead of actual column
 set statusline=%f\ %w%m%r\ %=%(%l,%v\ %=\ \ \ \ \ \ \ \ \ \ %P%)
 
+set incsearch
+set hlsearch
+noh
+
 set noerrorbells
 set belloff=all
 
 if has('gui_running')
   " No nonsense
-  set guioptions=Ace
+  set guioptions=Pce
   set clipboard=unnamedplus
 
   set guifont=Fira\ Code\ Retina:h11
@@ -196,6 +200,9 @@ endfunction
 
 map [1;5A <C-Up>
 map [1;5B <C-Down>
+
+" Clear search
+nnoremap <silent> <esc> :noh<return><esc>
 
 " Toggle insert (when using laptops without esc key)
 nmap <C-a> i
