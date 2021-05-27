@@ -5,7 +5,6 @@
 "  \ V /| | | | | | | | | (__
 " (_)_/ |_|_| |_| |_|_|  \___|
 "
-
 syntax on
 
 let mapleader = ","
@@ -39,39 +38,46 @@ noh
 set noerrorbells
 set belloff=all
 
+set encoding=utf-8
+set fileformat=unix
+set fileformats=unix,dos
+
+set backupdir=~/tmp
+set directory=~/tmp
+set undodir=~/tmp
+
 if has('gui_running')
   " No nonsense
   set guioptions=Pce
   set clipboard=unnamedplus
 
+  " Start maximized
+  au GUIEnter * simalt ~x
+
   set guifont=Fira\ Code\ Retina:h11
+  set guifont=Consolas:h12
+  set guifont=APL385\ Unicode:h11
+  set guifont=Anonymous\ Pro:h12
 
   " Always use block cursor
   set guicursor=i-n-v-c:block-Cursor/lCursor
-
-  " Start maximized
-  au GUIEnter * simalt ~x
 endif
 
 " Strip trailing whitespace on save
-autocmd BufWritePre * :%s/\s\+$//e
+au BufWritePre * :%s/\s\+$//e
 
 " 2 spaces
-au FileType javascript setlocal ts=2 sts=2 sw=2
-au FileType css setlocal ts=2 sts=2 sw=2
-au FileType typescript setlocal ts=2 sts=2 sw=2
+au FileType javascript      setlocal ts=2 sts=2 sw=2
+au FileType css             setlocal ts=2 sts=2 sw=2
+au FileType typescript      setlocal ts=2 sts=2 sw=2
 au FileType typescriptreact setlocal ts=2 sts=2 sw=2
-au FileType html setlocal ts=2 sts=2 sw=2
+au FileType html            setlocal ts=2 sts=2 sw=2
+au FileType vim             setlocal ts=2 sts=2 sw=2
 
 " Tabs
-au FileType go setlocal ts=4 sw=4 noexpandtab
-au FileType asm setlocal ts=8 sw=8 noexpandtab
+au FileType go   setlocal ts=4 sw=4 noexpandtab
+au FileType asm  setlocal ts=8 sw=8 noexpandtab
 au FileType masm setlocal ts=8 sw=8 noexpandtab
-
-" Prettier
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-au BufWritePost *.ts :Prettier
-au BufWritePost *.tsx :Prettier
 
 " _____  _             _
 " |  __ \| |           (_)
@@ -93,6 +99,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kien/ctrlp.vim'
+Plug 'drmikehenry/vim-headerguard'
 
 " lsp
 Plug 'neoclide/coc.nvim'
@@ -104,6 +111,8 @@ Plug 'vim-scripts/ShaderHighLight'
 Plug 'bfrg/vim-cpp-modern'
 Plug 'leafgarland/typescript-vim'
 Plug 'tasn/vim-tsx'
+Plug 'alvan/vim-closetag'
+Plug 'vim-python/python-syntax'
 
 " colorschemes
 Plug 'stillwwater/vim-violet'
@@ -128,16 +137,16 @@ call plug#end()
 " |__   __| |
 "    | |  | |__   ___ _ __ ___   ___
 "    | |  | '_ \ / _ \ '_ ` _ \ / _ \
-"    | |  | | | |  __/ | | | | |  _
+"    | |  | | | |  __/ | | | | |  "_
 "    |_|  |_| |_|\___|_| |_| |_|\___|
 "
 
-" Highlight ALL_UPPERCASE as constants
-syn match MacroConstant '\v\w@<!(\u|_+[A-Z0-9])[A-Z0-9_]*\w@!'
+" Custom rules ------------------------
 
-" Vector types
-syn match VectorType '\v\w@<!(float|int|double|char|bool)[2-8](x[2-8])?\w@!'
-syn match SSEType '\v\w@<!__m128(i)?\w@!'
+" Highlight ALL_UPPERCASE as constants
+au VimEnter,BufWinEnter * syn match macroConstant '\v\w@<!(\u|_+[A-Z0-9])[A-Z0-9_]*\w@!'
+
+" Theme setup -------------------------
 
 set t_Co=256
 
@@ -147,21 +156,44 @@ endif
 
 set background=dark
 
-let g:violet_accent='pink'
-let g:violet_blue=0
+let g:violet_accent = 'purple'
+let g:violet_solarized = 1
+let g:violet_cursor = 1
+
+let g:pencil_higher_contrast_ui=1
 
 colorscheme violet
+colorscheme pencil
+
+" Overrides ---------------------------
 
 " User terminal background
 hi! Normal ctermbg=NONE
 
-" Italics on comments: yikes
+" No italics on comments
 hi! Comment cterm=NONE gui=NONE
 
-hi! link MacroConstant PreProc
-hi! link VectorType    Type
-hi! link SSEType       Type
-hi! link csUserType    Normal
+hi! link macroConstant Normal
+
+" C++
+hi! link csUserType      Normal
+hi! link cppSTLconcept   Normal
+hi! link cppSTLnamespace Normal
+
+" Python
+hi! link pythonFunction  Function
+hi! link pythonImport    PreProc
+hi! link pythonStatement Type
+hi! link pythonSpaceError Normal
+
+" TS
+au VimEnter,BufWinEnter *.ts,*tsx
+  \ hi! link typescriptParens        Normal |
+  \ hi! link typescriptOpSymbols     Normal |
+  \ hi! link typescriptGlobalObjects Type   |
+  \ hi! link typescriptExceptions    Normal |
+  \ hi! link typescriptFuncKeyword   Type   |
+  \ hi! link typescriptLogicSymbols  Normal
 
 "  _  __          _     _           _
 " | |/ /         | |   (_)         | |
@@ -198,11 +230,16 @@ function! License(name)
   exec '0r ~/.vim/licenses/' . a:name . '.txt'
 endfunction
 
+let g:savedpos = getpos('.')
+let g:savedposfw = getpos('.')
+
+" Mappings ----------------------------
+
 map [1;5A <C-Up>
 map [1;5B <C-Down>
 
 " Clear search
-nnoremap <silent> <esc> :noh<return><esc>
+nno <silent> <esc> :noh<return><esc>
 
 " Toggle insert (when using laptops without esc key)
 nmap <C-a> i
@@ -239,9 +276,10 @@ nmap ga <Plug>(EasyAlign)
 " Zen mode
 nno <leader>z :Goyo<CR>
 
-let g:savedpos = getpos('.')
-let g:savedposfw = getpos('.')
+" Header guard
+nno <leader>hg :HeaderguardAdd<CR>
 
+" Jumps
 nno <leader>m :call MemPos()<CR>
 nno <leader>j :call JumpPos()<CR>zz
 
@@ -256,9 +294,9 @@ nno <leader>mit :call License('mit')<CR>
 
 " Echo syntax group
 nno <leader>tm
-      \ :echo
-      \ synIDattr(synID(line('.'), col('.'), 1), 'name')
-      \ <CR>
+  \ :echo
+  \ synIDattr(synID(line('.'), col('.'), 1), 'name')
+  \ <CR>
 
 "  _
 " | |
@@ -269,8 +307,14 @@ nno <leader>tm
 "                     __/ |             __/ |
 "                    |___/             |___/
 
+let g:python_highlight_all = 1
 let g:typescript_indent_disable = 1
 
+" Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+au BufWritePost *.tsx :Prettier
+
+" Emmet for react
 let g:user_emmet_settings = {
 \  'javascript' : {
 \      'extends' : 'jsx',
@@ -280,12 +324,16 @@ let g:user_emmet_settings = {
 \  },
 \}
 
+let g:headerguard_use_cpp_comments = 1
+
 " Only C# needs ale, all other language servers have builtin
 " linters.
 let g:ale_pattern_options = {
 \   '.*': {'ale_enabled': 0},
 \   '.*.cs$': {'ale_enabled': 1},
 \}
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
 
 " use <tab> for trigger completion and navigate to the next complete item
 function! s:check_back_space() abort
@@ -293,23 +341,36 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
+let g:asyncomplete_auto_popup = 0
+
 inoremap <silent><expr> <Tab>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<Tab>" :
       \ coc#refresh()
 
+let g:SuperTabDefaultCompletionType = "<Tab>"
+let g:SuperTabContextTextMemberPatterns = ['']
+.
+let g:OmniSharp_highlighting = 0
 let g:OmniSharp_server_use_mono = 1
 let g:OmniSharp_server_stdio = 1
 
 " let g:OmniSharp_typeLookupInPreview = 1
 let g:OmniSharp_timeout = 5
 set completeopt=longest,menuone
-set previewheight=5
+set previewheight=1
 let g:ale_linters = { 'cs': ['OmniSharp'] }
 let g:OmniSharp_highlight_types = 0
-let g:SuperTabDefaultCompletionType = "<Tab>"
 
 " let g:OmniSharp_want_snippet=1
 let g:OmniSharp_diagnostic_overrides = {
 \ 'CS1644': {'type': 'None'}
 \}
+
+let g:easy_align_delimiters = {
+  \ '\': {
+  \     'pattern': '\\$',
+  \ },
+  \ }
+
+au CursorHold *.cs OmniSharpTypeLookup
