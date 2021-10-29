@@ -8,6 +8,8 @@
 syntax on
 
 let mapleader = ","
+let work = 0
+let lsp = "coc"
 
 set mouse=a  " :O
 set laststatus=2
@@ -42,6 +44,10 @@ set encoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos
 
+if work == 1
+  set fileformat=dos
+endif
+
 set backupdir=~/tmp
 set directory=~/tmp
 set undodir=~/tmp
@@ -54,13 +60,19 @@ if has('gui_running')
   " Start maximized
   au GUIEnter * simalt ~x
 
-  set guifont=Fira\ Code\ Retina:h11
-  set guifont=Consolas:h12
-  set guifont=APL385\ Unicode:h11
-  set guifont=Anonymous\ Pro:h12
+  "set guifont=Fira\ Code\ Retina:h11
+  "set guifont=APL385\ Unicode:h12
+  "set guifont=Anonymous\ Pro:h13
+  set guifont=Lucida\ Console:h12
+  set guifont=fixedsys:h11
+  set guifont=Consolas:h13
+  set guifont=Cascadia\ Mono:h11
 
   " Always use block cursor
   set guicursor=i-n-v-c:block-Cursor/lCursor
+
+  " Horizontal cursor
+  " set guicursor+=i:hor15-Cursor/lCursor
 endif
 
 " Strip trailing whitespace on save
@@ -68,10 +80,7 @@ au BufWritePre * :%s/\s\+$//e
 
 " 2 spaces
 au FileType javascript      setlocal ts=2 sts=2 sw=2
-au FileType css             setlocal ts=2 sts=2 sw=2
-au FileType typescript      setlocal ts=2 sts=2 sw=2
 au FileType typescriptreact setlocal ts=2 sts=2 sw=2
-au FileType html            setlocal ts=2 sts=2 sw=2
 au FileType vim             setlocal ts=2 sts=2 sw=2
 
 " Tabs
@@ -89,9 +98,9 @@ au FileType masm setlocal ts=8 sw=8 noexpandtab
 "                 |___/
 
 if has('nvim')
-    call plug#begin('~/.local/share/nvim/plugged')
+  call plug#begin('~/.local/share/nvim/plugged')
 else
-    call plug#begin('~/.vim/plugged')
+  call plug#begin('~/.vim/plugged')
 endif
 
 " qol
@@ -100,11 +109,16 @@ Plug 'junegunn/vim-easy-align'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kien/ctrlp.vim'
 Plug 'drmikehenry/vim-headerguard'
+Plug 'tpope/vim-endwise'
 
 " lsp
-Plug 'neoclide/coc.nvim'
 Plug 'dense-analysis/ale'
 Plug 'omnisharp/omnisharp-vim'
+Plug 'fatih/vim-go'
+
+if lsp == "coc"
+  Plug 'neoclide/coc.nvim'
+endif
 
 " language support
 Plug 'vim-scripts/ShaderHighLight'
@@ -113,6 +127,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'tasn/vim-tsx'
 Plug 'alvan/vim-closetag'
 Plug 'vim-python/python-syntax'
+Plug 'teal-language/vim-teal'
 
 " colorschemes
 Plug 'stillwwater/vim-violet'
@@ -127,6 +142,7 @@ Plug 'YorickPeterse/happy_hacking.vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'axvr/photon.vim'
 Plug 'andreypopp/vim-colors-plain'
+Plug '~/.vim/plugged/vim-iridium'
 
 filetype plugin indent on
 
@@ -157,15 +173,24 @@ endif
 set background=dark
 
 let g:violet_accent = 'purple'
-let g:violet_solarized = 1
+let g:violet_solarized = 0
 let g:violet_cursor = 1
 
 let g:pencil_higher_contrast_ui=1
 
-colorscheme violet
-colorscheme pencil
+let g:iridium_classic = 0
+let g:iridium_solid_vsplit = 1
+let g:iridium_variant = "warm"
+
+colorscheme iridium
+colorscheme photon
+colorscheme paramount
 
 " Overrides ---------------------------
+
+" paramount overrides
+hi! Normal guibg='#0e0e0f'
+hi! link Type Constant
 
 " User terminal background
 hi! Normal ctermbg=NONE
@@ -181,10 +206,16 @@ hi! link cppSTLconcept   Normal
 hi! link cppSTLnamespace Normal
 
 " Python
-hi! link pythonFunction  Function
-hi! link pythonImport    PreProc
-hi! link pythonStatement Type
+hi! link pythonFunction   Function
+hi! link pythonImport     PreProc
+hi! link pythonStatement  Type
 hi! link pythonSpaceError Normal
+
+" Go
+hi! link goSpaceError Normal
+
+" C#
+hi! link csOpSymbols Normal
 
 " TS
 au VimEnter,BufWinEnter *.ts,*tsx
@@ -237,6 +268,16 @@ let g:savedposfw = getpos('.')
 
 map [1;5A <C-Up>
 map [1;5B <C-Down>
+
+nno <leader>( (
+nno <leader>{ {
+nno <leader>[ [
+nno <leader>) )
+nno <leader>} }
+nno <leader>] ]
+nno <leader>" "
+nno <leader>' '
+nno <leader>` `
 
 " Clear search
 nno <silent> <esc> :noh<return><esc>
@@ -310,6 +351,7 @@ nno <leader>tm
 let g:python_highlight_all = 1
 let g:typescript_indent_disable = 1
 
+
 " Prettier
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 au BufWritePost *.tsx :Prettier
@@ -343,6 +385,8 @@ endfunction
 
 let g:asyncomplete_auto_popup = 0
 
+au filetype go inoremap <buffer> . .<C-x><C-o>
+
 inoremap <silent><expr> <Tab>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<Tab>" :
@@ -351,7 +395,7 @@ inoremap <silent><expr> <Tab>
 let g:SuperTabDefaultCompletionType = "<Tab>"
 let g:SuperTabContextTextMemberPatterns = ['']
 .
-let g:OmniSharp_highlighting = 0
+let g:OmniSharp_highlighting = 1
 let g:OmniSharp_server_use_mono = 1
 let g:OmniSharp_server_stdio = 1
 
