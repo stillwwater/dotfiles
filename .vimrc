@@ -1,15 +1,14 @@
-"        _
-"       (_)
-" __   ___ _ __ ___  _ __ ___
-" \ \ / / | '_ ` _ \| '__/ __|
-"  \ V /| | | | | | | | | (__
-" (_)_/ |_|_| |_| |_|_|  \___|
-"
+" -------------------------------------------------
+" Name:    .vimrc
+" Version: 9.0
+" Author:  github.com/stillwwater
+" -------------------------------------------------
+
 syntax on
 
 let mapleader = ","
-let work = 0
-let lsp = "coc"
+let g:work = 0
+let g:lsp = "coc"
 
 set mouse=a  " :O
 set laststatus=2
@@ -44,13 +43,17 @@ set encoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos
 
-if work == 1
+if g:work == 1
   set fileformat=dos
 endif
 
 set backupdir=~/tmp
 set directory=~/tmp
 set undodir=~/tmp
+
+" -------------------------------------------------
+" gvim
+" -------------------------------------------------
 
 if has('gui_running')
   " No nonsense
@@ -75,6 +78,10 @@ if has('gui_running')
   " set guicursor+=i:hor15-Cursor/lCursor
 endif
 
+" -------------------------------------------------
+" Indent
+" -------------------------------------------------
+
 " Strip trailing whitespace on save
 au BufWritePre * :%s/\s\+$//e
 
@@ -88,20 +95,24 @@ au FileType go   setlocal ts=4 sw=4 noexpandtab
 au FileType asm  setlocal ts=8 sw=8 noexpandtab
 au FileType masm setlocal ts=8 sw=8 noexpandtab
 
-" _____  _             _
-" |  __ \| |           (_)
-" | |__) | |_   _  __ _ _ _ __  ___
-" |  ___/| | | | |/ _` | | '_ \/ __|
-" | |    | | |_| | (_| | | | | \__ \
-" |_|    |_|\__,_|\__, |_|_| |_|___/
-"                  __/ |
-"                 |___/
+" -------------------------------------------------
+" Plugins
+" -------------------------------------------------
 
 if has('nvim')
   call plug#begin('~/.local/share/nvim/plugged')
 else
   call plug#begin('~/.vim/plugged')
 endif
+
+" lsp
+if g:lsp == "coc"
+  Plug 'neoclide/coc.nvim'
+endif
+
+Plug 'dense-analysis/ale'
+Plug 'omnisharp/omnisharp-vim'
+Plug 'fatih/vim-go'
 
 " qol
 Plug 'junegunn/goyo.vim'
@@ -110,15 +121,6 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kien/ctrlp.vim'
 Plug 'drmikehenry/vim-headerguard'
 Plug 'tpope/vim-endwise'
-
-" lsp
-Plug 'dense-analysis/ale'
-Plug 'omnisharp/omnisharp-vim'
-Plug 'fatih/vim-go'
-
-if lsp == "coc"
-  Plug 'neoclide/coc.nvim'
-endif
 
 " language support
 Plug 'vim-scripts/ShaderHighLight'
@@ -149,20 +151,9 @@ filetype plugin indent on
 " Initialize plugin system
 call plug#end()
 
-"  _______ _
-" |__   __| |
-"    | |  | |__   ___ _ __ ___   ___
-"    | |  | '_ \ / _ \ '_ ` _ \ / _ \
-"    | |  | | | |  __/ | | | | |  "_
-"    |_|  |_| |_|\___|_| |_| |_|\___|
-"
-
-" Custom rules ------------------------
-
-" Highlight ALL_UPPERCASE as constants
-au VimEnter,BufWinEnter * syn match macroConstant '\v\w@<!(\u|_+[A-Z0-9])[A-Z0-9_]*\w@!'
-
-" Theme setup -------------------------
+" -------------------------------------------------
+" Colorscheme
+" -------------------------------------------------
 
 set t_Co=256
 
@@ -186,7 +177,9 @@ colorscheme iridium
 colorscheme photon
 colorscheme paramount
 
-" Overrides ---------------------------
+" -------------------------------------------------
+" Syntax
+" -------------------------------------------------
 
 " paramount overrides
 hi! Normal guibg='#0e0e0f'
@@ -226,15 +219,9 @@ au VimEnter,BufWinEnter *.ts,*tsx
   \ hi! link typescriptFuncKeyword   Type   |
   \ hi! link typescriptLogicSymbols  Normal
 
-"  _  __          _     _           _
-" | |/ /         | |   (_)         | |
-" | ' / ___ _   _| |__  _ _ __   __| |
-" |  < / _ \ | | | '_ \| | '_ \ / _` |
-" | . \  __/ |_| | |_) | | | | | (_| |
-" |_|\_\___|\__, |_.__/|_|_| |_|\__,_|
-"            __/ |
-"           |___/
-"
+" -------------------------------------------------
+" Functions
+" -------------------------------------------------
 
 " Remember current cursor position
 function! MemPos()
@@ -264,7 +251,9 @@ endfunction
 let g:savedpos = getpos('.')
 let g:savedposfw = getpos('.')
 
-" Mappings ----------------------------
+" -------------------------------------------------
+" Keymap
+" -------------------------------------------------
 
 map [1;5A <C-Up>
 map [1;5B <C-Down>
@@ -339,18 +328,12 @@ nno <leader>tm
   \ synIDattr(synID(line('.'), col('.'), 1), 'name')
   \ <CR>
 
-"  _
-" | |
-" | |     __ _ _ __   __ _ _   _  __ _  __ _  ___
-" | |    / _` | '_ \ / _` | | | |/ _` |/ _` |/ _ \
-" | |___| (_| | | | | (_| | |_| | (_| | (_| |  __/
-" |______\__,_|_| |_|\__, |\__,_|\__,_|\__, |\___|
-"                     __/ |             __/ |
-"                    |___/             |___/
+" -------------------------------------------------
+" LSP
+" -------------------------------------------------
 
 let g:python_highlight_all = 1
 let g:typescript_indent_disable = 1
-
 
 " Prettier
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
