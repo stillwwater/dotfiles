@@ -1,6 +1,6 @@
 " -------------------------------------------------
 " Name:    .vimrc
-" Version: 9.0
+" Version: 10.0
 " Author:  github.com/stillwwater
 " -------------------------------------------------
 
@@ -18,6 +18,8 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+"set cursorline
+set number
 
 set cino=N-s  " Don't indent namespace
 set cino+=:0  " Don't indent switch labels
@@ -26,7 +28,7 @@ set cino+=g0  " Don't indent public: or private: labels
 set splitbelow
 
 " Sign column for coc.nvim
-set signcolumn=yes
+"set signcolumn=yes
 
 " Pretty much the default status line but using virtual column
 " instead of actual column
@@ -66,16 +68,17 @@ if has('gui_running')
   "set guifont=Fira\ Code\ Retina:h11
   "set guifont=APL385\ Unicode:h12
   "set guifont=Anonymous\ Pro:h13
-  set guifont=Lucida\ Console:h12
   set guifont=fixedsys:h11
-  set guifont=Consolas:h13
+  set guifont=Courier\ New:h12
+  set guifont=Consolas:h12
+  set guifont=Lucida\ Console:h12
   set guifont=Cascadia\ Mono:h11
 
   " Always use block cursor
   set guicursor=i-n-v-c:block-Cursor/lCursor
 
   " Horizontal cursor
-  " set guicursor+=i:hor15-Cursor/lCursor
+  set guicursor+=i:hor15-Cursor/lCursor
 endif
 
 " -------------------------------------------------
@@ -144,7 +147,8 @@ Plug 'YorickPeterse/happy_hacking.vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'axvr/photon.vim'
 Plug 'andreypopp/vim-colors-plain'
-Plug '~/.vim/plugged/vim-iridium'
+Plug 'stillwwater/vim-iridium'
+Plug 'stillwwater/vim-ink16'
 
 filetype plugin indent on
 
@@ -161,7 +165,6 @@ if (has('termguicolors'))
   set termguicolors
 endif
 
-set background=dark
 
 let g:violet_accent = 'purple'
 let g:violet_solarized = 0
@@ -176,10 +179,20 @@ let g:iridium_variant = "warm"
 colorscheme iridium
 colorscheme photon
 colorscheme paramount
+colorscheme default
+colorscheme ink16
+
+set background=dark
 
 " -------------------------------------------------
 " Syntax
 " -------------------------------------------------
+
+syntax match ccxType "\v\w@<!(s8|u8|s16|u16|s32|u32|s64|u64|float32|float64)\w@!"
+au VimEnter,BufWinEnter *.cpp,*.h
+  \ hi! link ccxType Type
+
+hi! link ccxType Type
 
 " paramount overrides
 hi! Normal guibg='#0e0e0f'
