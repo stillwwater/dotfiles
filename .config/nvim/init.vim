@@ -1,7 +1,7 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
 " Name:     init.vim
-" Version:  12.1
+" Version:  12.2
 " Date:     2022-07-01
 " Modified: 2022-07-16
 " Author:   stillwwater@gmail.com
@@ -16,6 +16,8 @@ Plug 'voldikss/vim-floaterm'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 call plug#end()
+
+lua require('plugins')
 " }}}
 
 " OPTIONS ---------------------------------------------------------------- {{{
@@ -49,10 +51,6 @@ set cino+=L0  " Don't auto unindent labels
 set cino+=g0  " Don't indent public: or private: labels
 
 nohlsearch
-" }}}
-
-" NVIM ------------------------------------------------------------------- {{{
-lua require('plugins')
 " }}}
 
 " AUTOCOMMANDS ----------------------------------------------------------- {{{
