@@ -1,9 +1,10 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
-" Name:    init.vim
-" Version: 12.0
-" Date:    2022-07-01
-" Author:  stillwwater@gmail.com
+" Name:     init.vim
+" Version:  12.1
+" Date:     2022-07-01
+" Modified: 2022-07-16
+" Author:   stillwwater@gmail.com
 " ----------------------------------------------------------------------------
 
 " PLUGINS ---------------------------------------------------------------- {{{
@@ -38,6 +39,8 @@ set fileformats=unix,dos
 set completeopt=menuone,preview
 set pumheight=12
 set pumwidth=10
+set clipboard=unnamedplus
+set guicursor=
 
 set cino=N-s  " Don't indent namespace
 set cino+=:0  " Don't indent switch labels
@@ -72,12 +75,15 @@ nnoremap <C-l> :nohl<CR><C-l>
 nnoremap <leader>tm :echo synIDattr(synID(line('.'), col('.'), 1), 'name')<CR>
 nnoremap <C-p> :lua require'telescope.builtin'.find_files({layout_strategy='vertical'})<CR>
 nnoremap <C-c> i
+nnoremap <C-j> :FloatermToggle<CR>
+nnoremap <C-b> :FloatermToggle<CR>build && run<CR>
 
 inoremap <C-n> <cmd>lua require('cmp').complete()<CR>
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-Tab>"
 inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 tnoremap <Esc> <C-\><C-n>
+tnoremap <C-j> <C-\><C-n>:sleep 33m<CR>:FloatermHide<CR>
 " }}}
 
 " COLORS ----------------------------------------------------------------- {{{
