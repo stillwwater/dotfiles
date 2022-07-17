@@ -1,4 +1,4 @@
-" -------------------------------------------------
+" -------- Moved to .config/nvim/init.vim ---------
 " Name:    .vimrc
 " Version: 11.0
 " Author:  github.com/stillwwater
