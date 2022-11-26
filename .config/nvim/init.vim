@@ -1,9 +1,9 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
 " Name:     init.vim
-" Version:  12.3
+" Version:  12.5
 " Date:     2022-07-01
-" Modified: 2022-07-25
+" Modified: 2022-10-15
 " Author:   stillwwater@gmail.com
 " ----------------------------------------------------------------------------
 
@@ -15,7 +15,9 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'voldikss/vim-floaterm'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'junegunn/vim-easy-align'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+Plug 'stillwwater/wm.vim'
 call plug#end()
 
 lua require('plugins')
@@ -30,6 +32,7 @@ set backspace=indent,eol,start
 set expandtab
 set smartindent
 set laststatus=2
+set showtabline=2
 set noerrorbells
 set belloff=all
 set ignorecase
@@ -51,7 +54,25 @@ set cino+=l1  " Don't align case braces
 set cino+=L0  " Don't auto unindent labels
 set cino+=g0  " Don't indent public: or private: labels
 
+if has('win32')
+    set shell=cmd.exe\ /k
+endif
+
 nohlsearch
+
+let g:mkdp_auto_close = 0
+let g:mkdp_refresh_slow = 0
+let g:mkdp_markdown_css = ''
+
+let g:matchparen_timeout = 6
+let g:matchparen_insert_timeout = 6
+
+let g:easy_align_delimiters = {
+  \ '\': {
+  \     'pattern': '\\$',
+  \ },
+  \ }
+
 " }}}
 
 " AUTOCOMMANDS ----------------------------------------------------------- {{{
@@ -76,8 +97,10 @@ nnoremap <C-l> :nohl<CR><C-l>
 nnoremap <leader>tm :echo synIDattr(synID(line('.'), col('.'), 1), 'name')<CR>
 nnoremap <C-p> :lua require'telescope.builtin'.find_files({layout_strategy='vertical'})<CR>
 nnoremap <C-c> i
-nnoremap <C-b> :FloatermToggle<CR>build && run<CR>
 nnoremap <C-\> :FloatermToggle<CR>
+nnoremap ga <Plug>(EasyAlign)
+nnoremap <leader>l :hi Normal guibg=#22272E<CR>
+nnoremap <leader>L :hi Normal guibg=gray8<CR>
 
 inoremap <C-n> <cmd>lua require('cmp').complete()<CR>
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-Tab>"
@@ -91,21 +114,27 @@ tnoremap <C-\> <C-\><C-n>:FloatermToggle<CR>
 " COLORS ----------------------------------------------------------------- {{{
 set termguicolors
 hi clear
-hi Normal           guifg=gray72           guibg=gray7 gui=none
+hi Normal           guifg=gray72           guibg=gray10 gui=none
 hi Identifier       guifg=fg
-hi Type             guifg=darkgoldenrod3   gui=none
+hi Function         guifg=deepskyblue3
+hi Type             guifg=hotpink2         gui=none
 hi Statement        guifg=honeydew4        gui=none
-hi Constant         guifg=palevioletred3
+hi Constant         guifg=cyan3
+hi String           guifg=rosybrown3
 hi Comment          guifg=slategray4
-hi Special          guifg=darkgoldenrod3
+hi Special          guifg=rosybrown4
 hi PreProc          guifg=lightblue3
 hi Todo             guifg=bg               guibg=lightblue
 hi NonText          guifg=slategray4
 hi ExtraWhitespace  guifg=red              guibg=red
 hi StatusLine       guifg=bg               guibg=fg gui=none
+hi StatusLineNC     guifg=gray16           guibg=fg gui=none
+hi TabLineFill      guifg=gray16           guibg=gray9 gui=none
+hi TabLineSel                              guibg=skyblue4 gui=none
+hi TabLine                                 guibg=gray9 gui=none
 
 hi VertSplit        guifg=bg               guibg=gray72
 hi Visual                                  guibg=bg gui=inverse
-hi Pmenu            guifg=fg               guibg=gray12
+hi Pmenu            guifg=fg               guibg=bg
 hi PmenuSel         guifg=bg
 " }}}
