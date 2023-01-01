@@ -1,9 +1,9 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
 " Name:     init.vim
-" Version:  12.5
+" Version:  12.6
 " Date:     2022-07-01
-" Modified: 2022-10-15
+" Modified: 2023-01-01
 " Author:   stillwwater@gmail.com
 " ----------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ set cino+=L0  " Don't auto unindent labels
 set cino+=g0  " Don't indent public: or private: labels
 
 if has('win32')
-    set shell=cmd.exe\ /k
+    set shell=cmd.exe
 endif
 
 nohlsearch
@@ -101,6 +101,7 @@ nnoremap <C-\> :FloatermToggle<CR>
 nnoremap ga <Plug>(EasyAlign)
 nnoremap <leader>l :hi Normal guibg=#22272E<CR>
 nnoremap <leader>L :hi Normal guibg=gray8<CR>
+nnoremap <C-s> :!dev && build.bat /run<CR>
 
 inoremap <C-n> <cmd>lua require('cmp').complete()<CR>
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-Tab>"
@@ -114,27 +115,27 @@ tnoremap <C-\> <C-\><C-n>:FloatermToggle<CR>
 " COLORS ----------------------------------------------------------------- {{{
 set termguicolors
 hi clear
-hi Normal           guifg=gray72           guibg=gray10 gui=none
-hi Identifier       guifg=fg
-hi Function         guifg=deepskyblue3
-hi Type             guifg=hotpink2         gui=none
-hi Statement        guifg=honeydew4        gui=none
-hi Constant         guifg=cyan3
-hi String           guifg=rosybrown3
-hi Comment          guifg=slategray4
-hi Special          guifg=rosybrown4
-hi PreProc          guifg=lightblue3
+hi Normal           guifg=gray72           guibg=gray8 gui=none
+"hi Identifier       guifg=fg
+"hi Function         guifg=#969dcb
+"hi Type             guifg=#cfcfbf          gui=none
+"hi Statement        guifg=#969dcb          gui=none
+"hi Constant         guifg=cyan3
+"hi String           guifg=#b4c4b4
+"hi Comment          guifg=slategray4
+"hi Special          guifg=rosybrown4
+"hi PreProc          guifg=lightblue3
 hi Todo             guifg=bg               guibg=lightblue
 hi NonText          guifg=slategray4
 hi ExtraWhitespace  guifg=red              guibg=red
 hi StatusLine       guifg=bg               guibg=fg gui=none
-hi StatusLineNC     guifg=gray16           guibg=fg gui=none
-hi TabLineFill      guifg=gray16           guibg=gray9 gui=none
-hi TabLineSel                              guibg=skyblue4 gui=none
-hi TabLine                                 guibg=gray9 gui=none
+hi StatusLineNC     guifg=gray36           guibg=fg gui=none
+hi TabLineFill      guifg=bg               guibg=fg gui=none
+hi TabLineSel       guifg=bg               guibg=fg gui=none
+hi TabLine          guifg=bg               guibg=fg gui=none
 
 hi VertSplit        guifg=bg               guibg=gray72
 hi Visual                                  guibg=bg gui=inverse
 hi Pmenu            guifg=fg               guibg=bg
-hi PmenuSel         guifg=bg
+hi PmenuSel         guifg=bg               guibg=fg
 " }}}
