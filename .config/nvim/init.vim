@@ -1,9 +1,9 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
 " Name:     init.vim
-" Version:  12.6
+" Version:  12.7
 " Date:     2022-07-01
-" Modified: 2023-01-01
+" Modified: 2023-04-16
 " Author:   stillwwater@gmail.com
 " ----------------------------------------------------------------------------
 
@@ -47,12 +47,17 @@ set pumheight=12
 set pumwidth=10
 set clipboard=unnamedplus
 set guicursor=
+set nofoldenable
+set foldlevel=99
+set foldmethod=syntax
 
 set cino=N-s  " Don't indent namespace
 set cino+=:0  " Don't indent switch labels
 set cino+=l1  " Don't align case braces
 set cino+=L0  " Don't auto unindent labels
 set cino+=g0  " Don't indent public: or private: labels
+
+let c_no_curly_error=0 " vim doesn't like C99 braces
 
 if has('win32')
     set shell=cmd.exe
@@ -78,6 +83,8 @@ let g:easy_align_delimiters = {
 " AUTOCOMMANDS ----------------------------------------------------------- {{{
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufReadPost *.vert set syntax=c
+autocmd BufReadPost *.frag set syntax=c
 " }}}
 
 " KEYMAP ----------------------------------------------------------------- {{{
@@ -101,7 +108,7 @@ nnoremap <C-\> :FloatermToggle<CR>
 nnoremap ga <Plug>(EasyAlign)
 nnoremap <leader>l :hi Normal guibg=#22272E<CR>
 nnoremap <leader>L :hi Normal guibg=gray8<CR>
-nnoremap <C-s> :!dev && build.bat /run<CR>
+nnoremap <C-s> :!dev && make.cmd /r<CR>
 
 inoremap <C-n> <cmd>lua require('cmp').complete()<CR>
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-Tab>"
@@ -132,7 +139,7 @@ hi StatusLine       guifg=bg               guibg=fg gui=none
 hi StatusLineNC     guifg=gray36           guibg=fg gui=none
 hi TabLineFill      guifg=bg               guibg=fg gui=none
 hi TabLineSel       guifg=bg               guibg=fg gui=none
-hi TabLine          guifg=bg               guibg=fg gui=none
+hi TabLine          guifg=gray36           guibg=fg gui=none
 
 hi VertSplit        guifg=bg               guibg=gray72
 hi Visual                                  guibg=bg gui=inverse
