@@ -1,9 +1,9 @@
 " vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=1:
 " ----------------------------------------------------------------------------
 " Name:     init.vim
-" Version:  12.7
+" Version:  12.8
 " Date:     2022-07-01
-" Modified: 2023-04-16
+" Modified: 2023-12-05
 " Author:   stillwwater@gmail.com
 " ----------------------------------------------------------------------------
 
@@ -12,7 +12,6 @@ call plug#begin()
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'voldikss/vim-floaterm'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'junegunn/vim-easy-align'
@@ -25,7 +24,6 @@ lua require('plugins')
 
 " OPTIONS ---------------------------------------------------------------- {{{
 syntax on
-
 set mouse=a
 set tabstop=4 shiftwidth=4 softtabstop=4
 set backspace=indent,eol,start
@@ -57,13 +55,13 @@ set cino+=l1  " Don't align case braces
 set cino+=L0  " Don't auto unindent labels
 set cino+=g0  " Don't indent public: or private: labels
 
-let c_no_curly_error=0 " vim doesn't like C99 braces
-
 if has('win32')
     set shell=cmd.exe
 endif
 
 nohlsearch
+
+let c_no_curly_error = 0 " vim doesn't like C99 braces
 
 let g:mkdp_auto_close = 0
 let g:mkdp_refresh_slow = 0
@@ -92,7 +90,6 @@ let mapleader = ','
 
 nnoremap <leader>r :source $MYVIMRC<CR>
 nnoremap <leader>v :e $MYVIMRC<CR>
-nnoremap <leader>n :noh<CR>
 nnoremap <PageUp> <PageUp>zz
 nnoremap <PageDown> <PageDown>zz
 nnoremap <C-Up> {
@@ -104,45 +101,40 @@ nnoremap <C-l> :nohl<CR><C-l>
 nnoremap <leader>tm :echo synIDattr(synID(line('.'), col('.'), 1), 'name')<CR>
 nnoremap <C-p> :lua require'telescope.builtin'.find_files({layout_strategy='vertical'})<CR>
 nnoremap <C-c> i
-nnoremap <C-\> :FloatermToggle<CR>
 nnoremap ga <Plug>(EasyAlign)
 nnoremap <leader>l :hi Normal guibg=#22272E<CR>
 nnoremap <leader>L :hi Normal guibg=gray8<CR>
-nnoremap <C-s> :!dev && make.cmd /r<CR>
+
+if has('win32')
+    nnoremap <C-s> :!dev && make.cmd /r<CR>
+endif
 
 inoremap <C-n> <cmd>lua require('cmp').complete()<CR>
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-Tab>"
 inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 tnoremap <Esc> <C-\><C-n>
-tnoremap <C-w> <C-\><C-n><C-w>
-tnoremap <C-\> <C-\><C-n>:FloatermToggle<CR>
 " }}}
 
 " COLORS ----------------------------------------------------------------- {{{
 set termguicolors
 hi clear
-hi Normal           guifg=gray72           guibg=gray8 gui=none
-"hi Identifier       guifg=fg
-"hi Function         guifg=#969dcb
-"hi Type             guifg=#cfcfbf          gui=none
-"hi Statement        guifg=#969dcb          gui=none
-"hi Constant         guifg=cyan3
-"hi String           guifg=#b4c4b4
-"hi Comment          guifg=slategray4
-"hi Special          guifg=rosybrown4
-"hi PreProc          guifg=lightblue3
-hi Todo             guifg=bg               guibg=lightblue
+colorscheme lunaperche
+
+hi link Function Normal
+hi Normal           guifg=gray76           guibg=gray6  gui=none
+
+hi Todo             guifg=bg               guibg=lightblue gui=none
 hi NonText          guifg=slategray4
 hi ExtraWhitespace  guifg=red              guibg=red
-hi StatusLine       guifg=bg               guibg=fg gui=none
-hi StatusLineNC     guifg=gray36           guibg=fg gui=none
-hi TabLineFill      guifg=bg               guibg=fg gui=none
-hi TabLineSel       guifg=bg               guibg=fg gui=none
-hi TabLine          guifg=gray36           guibg=fg gui=none
+hi StatusLine       guifg=bg               guibg=fg     gui=none
+hi StatusLineNC     guifg=gray36           guibg=fg     gui=none
+hi TabLineFill      guifg=bg               guibg=bg     gui=none
+hi TabLineSel       guifg=bg               guibg=white  gui=none
+hi TabLine          guifg=bg               guibg=gray46 gui=none
 
-hi VertSplit        guifg=bg               guibg=gray72
-hi Visual                                  guibg=bg gui=inverse
-hi Pmenu            guifg=fg               guibg=bg
+hi VertSplit        guifg=fg               guibg=none
+hi Visual           guifg=none             guibg=bg gui=inverse
+hi Pmenu            guifg=gray62           guibg=bg
 hi PmenuSel         guifg=bg               guibg=fg
 " }}}
